@@ -292,9 +292,6 @@ function draw(){
   drawCenterControls();
   drawLegend();
   drawInfoPanel();
-  
-  // Disegno ornamenti decorativi agli angoli della pagina
-  drawCornerOrnaments();
 }
 
 function drawPaperTexture() {
@@ -305,23 +302,6 @@ function drawPaperTexture() {
     fill(139, 69, 19, random(2, 8));
     circle(random(width), random(height), random(0.5, 2));
   }
-  pop();
-}
-
-function drawCornerOrnaments() {
-  push();
-  stroke(colors.accent);
-  strokeWeight(2);
-  noFill();
-  
-  // Angolo superiore sinistro
-  line(20, 20, 60, 20);
-  line(20, 20, 20, 60);
-  
-  // Angolo superiore destro
-  line(width - 20, 20, width - 60, 20);
-  line(width - 20, 20, width - 20, 60);
-  
   pop();
 }
 
@@ -435,7 +415,7 @@ function drawCentralRectangle(){
     drawingContext.clip();
     
     imageMode(CENTER);
-    image(mappaImg, 4, -16.9, rectA*2.1, rectB*2);
+    image(mappaImg, 4.4 * scaleFactor, -20 * scaleFactor, rectA*2.1, rectB*2);
     
     drawingContext.restore();
   }

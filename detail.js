@@ -57,6 +57,23 @@ const categoryToImageMap = {
   'Volcanic field': 'Cone'
 };
 
+// ========= FACTORE DI SCALA PER ADATTAMENTO ========= //
+// 1.0 = densità originale, valori più alti = più spazioso
+const LAYOUT_SCALE = 1.01; // Manteniamo la densità originale per ora
+
+// Funzioni helper per mantenere le proporzioni del riferimento
+function scaleX(value) {
+  return (value / 1920) * width * LAYOUT_SCALE;
+}
+
+function scaleY(value) {
+  return (value / 1200) * height * LAYOUT_SCALE;
+}
+
+function scaleMin(value) {
+  return (value / Math.min(1920, 1200)) * Math.min(width, height) * LAYOUT_SCALE;
+}
+
 function preload() {
   // Carico il file CSV con i dati dei vulcani
   // "header" indica che la prima riga contiene i nomi delle colonne
@@ -82,17 +99,17 @@ function setup() {
   
   // Creo il pulsante per tornare indietro
   backButton = createButton('← Back');
-  backButton.position(30, 30);
+  backButton.position(scaleX(80), scaleY(50));
   // STYLING DEL PULSANTE -> gli do un aspetto vintage che si abbini al resto
   backButton.style('font-family', 'Georgia, serif');
-  backButton.style('font-size', '16px');
-  backButton.style('padding', '10px 16px');
+  backButton.style('font-size', scaleX(16) + 'px');
+  backButton.style('padding', scaleX(10) + 'px ' + scaleX(16) + 'px');
   backButton.style('background-color', 'white');
   backButton.style('color', colors.mediumBrown);
-  backButton.style('border', '2px solid ' + colors.mediumBrown);
-  backButton.style('border-radius', '2px');
+  backButton.style('border', scaleX(2) + 'px solid ' + colors.mediumBrown);
+  backButton.style('border-radius', scaleX(2) + 'px');
   backButton.style('cursor', 'pointer');
-  backButton.style('box-shadow', '2px 2px 0px rgba(90,74,58,0.3)');
+  backButton.style('box-shadow', scaleX(2) + 'px ' + scaleX(2) + 'px 0px rgba(90,74,58,0.3)');
   backButton.mousePressed(handleBack); // QUANDO CLICCO CHIAMA handleBack
   
   noLoop(); // Disegno solo una volta, non in continuo -> perché i dati non cambiano in tempo reale
@@ -145,18 +162,18 @@ function draw() {
   // ========= CALCOLO LAYOUT RESPONSIVE =========//
   // Calcolo layout responsive basato sulle dimensioni della finestra
   // Uso percentuali così si adatta a qualsiasi dimensione dello schermo
-  let margin = width * 0.08;
+  let margin = scaleX(80); // width * 0.08 per 1920px = 154px
   let contentWidth = width - margin * 2;
   
   // Sezione titolo
   // Disegno il titolo principale con nome vulcano e posizione
-  drawTitle(selected.getString("Volcano Name"), width / 2, height * 0.15, selected);
+  drawTitle(selected.getString("Volcano Name"), width / 2, scaleY(130), selected);
   
   // Contenuto principale - tre colonne
   // Divido lo spazio in tre colonne per organizzare le informazioni
   let colWidth = contentWidth / 3.5;
-  let startY = height * 0.2;
-  let contentHeight = height * 0.7;
+  let startY = scaleY(240); // height * 0.2 per 1200px = 240px
+  let contentHeight = scaleY(840); // height * 0.7 per 1200px = 840px
   
   // Colonna sinistra: grafico dell'elevazione
   // Mostra dove si posiziona questo vulcano rispetto a tutti gli altri in termini di altezza
@@ -175,7 +192,7 @@ function draw() {
   
   // Footer
   // Crediti e fonte dati in fondo alla pagina
-  drawFooter(width / 2, height - 30);
+  drawFooter(width / 2, height - scaleY(30));
 }
 
 function findVolcanoByName(name) {
@@ -245,17 +262,17 @@ function drawPaperTexture() {
 function drawCornerOrnaments() {
   push();
   stroke(colors.accent);
-  strokeWeight(2);
+  strokeWeight(scaleMin(2));
   noFill();
   
   // Angolo superiore sinistro
   // Due linee che formano un angolo di 90 gradi
-  line(20, 20, 60, 20);
-  line(20, 20, 20, 60);
+  line(scaleX(20), scaleY(20), scaleX(60), scaleY(20));
+  line(scaleX(20), scaleY(20), scaleX(20), scaleY(60));
   
   // Angolo superiore destro
-  line(width - 20, 20, width - 60, 20);
-  line(width - 20, 20, width - 20, 60);
+  line(width - scaleX(20), scaleY(20), width - scaleX(60), scaleY(20));
+  line(width - scaleX(20), scaleY(20), width - scaleX(20), scaleY(60));
   
   pop();
 }
@@ -266,23 +283,23 @@ function drawTitle(volcanoName, x, y, selected) {
   
   // Linea decorativa sopra il titolo
   // Quella linea con i rombi che vediamo sopra il nome
-  drawDecorativeLine(x, y - 90, 150);
+  drawDecorativeLine(x, y - scaleY(100), scaleX(150));
   
   // Titolo principale
   textFont('Georgia');
-  textSize(width * 0.045);
+  textSize(scaleX(60)); // width * 0.045 per 1920px = 86px
   fill(colors.darkBrown);
-  text(volcanoName, x, y - 50);
+  text(volcanoName, x, y - scaleY(50));
   
   // Informazioni sulla posizione
   // Paese e coordinate geografiche
-  textSize(width * 0.012);
+  textSize(scaleX(20)); // width * 0.012 per 1920px = 23px
   fill(colors.lightBrown);
   noStroke();
-  text(selected.getString("Country") + " · " + selected.getNum("Latitude") + "°, " + selected.getNum("Longitude") + "°", x, y -10);
+  text(selected.getString("Country") + " · " + selected.getNum("Latitude") + "°, " + selected.getNum("Longitude") + "°", x, y - scaleY(-5));
   
   // Linea decorativa sotto il titolo
-  drawDecorativeLine(x, y + 15, 150);
+  drawDecorativeLine(x, y + scaleY(35), scaleX(150));
   
   pop();
 }
@@ -290,38 +307,38 @@ function drawTitle(volcanoName, x, y, selected) {
 function drawDecorativeLine(x, y, w) {
   push();
   stroke(colors.accent);
-  strokeWeight(1);
+  strokeWeight(scaleMin(1));
   
   // Linea sinistra
   // Parte sinistra della linea decorativa
-  line(x - w, y, x - 20, y);
+  line(x - w, y, x - scaleX(20), y);
   
   // Rombi decorativi al centro
   // Quei tre quadrati ruotati che sembrano rombi
   fill(colors.accent);
   noStroke();
   push();
-  translate(x - 10, y);
+  translate(x - scaleX(10), y);
   rotate(PI / 4); // Ruoto di 45 gradi per fare il rombo
-  rect(-2, -2, 4, 4);
+  rect(-scaleMin(2), -scaleMin(2), scaleMin(4), scaleMin(4));
   pop();
   
   push();
   translate(x, y);
   rotate(PI / 4);
-  rect(-2, -2, 4, 4);
+  rect(-scaleMin(2), -scaleMin(2), scaleMin(4), scaleMin(4));
   pop();
   
   push();
-  translate(x + 10, y);
+  translate(x + scaleX(10), y);
   rotate(PI / 4);
-  rect(-2, -2, 4, 4);
+  rect(-scaleMin(2), -scaleMin(2), scaleMin(4), scaleMin(4));
   pop();
   
   // Linea destra
   stroke(colors.accent);
-  strokeWeight(1);
-  line(x + 20, y, x + w, y);
+  strokeWeight(scaleMin(1));
+  line(x + scaleX(20), y, x + w, y);
   
   pop();
 }
@@ -332,8 +349,8 @@ function drawElevationChart(x, y, w, h, selected) {
   // Sfondo della card
   fill(255);
   stroke(colors.mediumBrown);
-  strokeWeight(2);
-  rect(x, y, w, h, 2); // Rettangolo con angoli arrotondati
+  strokeWeight(scaleMin(2));
+  rect(x, y, w, h, scaleMin(2)); // Rettangolo con angoli arrotondati
   
   // Angoli decorativi
   // Quelle linee decorative negli angoli della card
@@ -342,7 +359,7 @@ function drawElevationChart(x, y, w, h, selected) {
   // Titolo
   textAlign(CENTER, CENTER);
   textFont('Georgia');
-  textSize(w * 0.12);
+  textSize(w * 0.08);
   fill(colors.darkBrown);
   noStroke();
   
@@ -350,16 +367,16 @@ function drawElevationChart(x, y, w, h, selected) {
   // I tre punti sopra la parola "Elevation"
   fill(colors.accent);
   let dotY = y + h * 0.08;
-  circle(x + w/2 - 10, dotY, 3);
-  circle(x + w/2, dotY, 3);
-  circle(x + w/2 + 10, dotY, 3);
+  circle(x + w/2 - scaleX(10), dotY, scaleMin(3));
+  circle(x + w/2, dotY, scaleMin(3));
+  circle(x + w/2 + scaleX(10), dotY, scaleMin(3));
   
   text("Elevation", x + w/2, y + h * 0.13);
   
   // Linea decorativa sotto il titolo
   stroke(colors.accent);
-  strokeWeight(1);
-  line(x + w/2 - 30, y + h * 0.16, x + w/2 + 30, y + h * 0.16);
+  strokeWeight(scaleMin(1));
+  line(x + w/2 - scaleX(30), y + h * 0.16, x + w/2 + scaleX(30), y + h * 0.16);
   
   // ========= OTTENGO I DATI DI ELEVAZIONE DAL CSV =========//
   // Ottengo i dati di elevazione dal CSV
@@ -374,7 +391,7 @@ function drawElevationChart(x, y, w, h, selected) {
   
   // ========= DISEGNO IL TRIANGOLO DELLA MONTAGNA =========//
   // Triangolo della montagna
-  let chartX = x + w/2.4;
+  let chartX = x + w/2.7;
   let chartTop = y + h * 0.22;
   let chartBottom = y + h * 0.72;
   let chartHeight = chartBottom - chartTop;
@@ -407,7 +424,7 @@ function drawElevationChart(x, y, w, h, selected) {
   
   // Contorno della montagna
   stroke(colors.accent);
-  strokeWeight(2);
+  strokeWeight(scaleMin(2));
   noFill();
   triangle(
     chartX, chartTop,           // Vertice in alto
@@ -418,17 +435,17 @@ function drawElevationChart(x, y, w, h, selected) {
   // Linea dell'elevazione corrente
   // Linea tratteggiata che mostra dove si trova questo vulcano
   stroke(colors.accent);
-  strokeWeight(2);
+  strokeWeight(scaleMin(2));
   drawingContext.setLineDash([4, 4]); // Linea tratteggiata
-  line(chartX - chartWidth/2 - 10, currentY, chartX + chartWidth/2 + 10, currentY);
+  line(chartX - chartWidth/2 - scaleX(10), currentY, chartX + chartWidth/2 + scaleX(10), currentY);
   drawingContext.setLineDash([]); // Ripristino linea normale
   
   // Punto dell'elevazione corrente
   // Cerchietto arancione sulla linea tratteggiata
   fill(colors.orange);
   stroke(colors.mediumBrown);
-  strokeWeight(1.5);
-  circle(chartX, currentY, 8);
+  strokeWeight(scaleMin(1.5));
+  circle(chartX, currentY, scaleMin(8));
   
   // Linea del livello del mare (se applicabile)
   // Solo se ci sono vulcani sotto il livello del mare
@@ -436,9 +453,9 @@ function drawElevationChart(x, y, w, h, selected) {
     let seaLevelRatio = (0 - colMin) / range;
     let seaLevelY = chartBottom - (seaLevelRatio * chartHeight);
     stroke(colors.blue);
-    strokeWeight(1.5);
+    strokeWeight(scaleMin(1.5));
     drawingContext.setLineDash([6, 3]);
-    line(chartX - chartWidth/2 - 10, seaLevelY, chartX + chartWidth/2 + 10, seaLevelY);
+    line(chartX - chartWidth/2 - scaleX(10), seaLevelY, chartX + chartWidth/2 + scaleX(10), seaLevelY);
     drawingContext.setLineDash([]);
     
     // Etichetta del livello del mare
@@ -446,7 +463,7 @@ function drawElevationChart(x, y, w, h, selected) {
     fill(colors.blue);
     noStroke();
     textAlign(LEFT, CENTER);
-    text("sea level", chartX + chartWidth/2 + 15, seaLevelY);
+    text("sea level", chartX + chartWidth/2 + scaleX(15), seaLevelY);
   }
   
   // Etichette
@@ -456,18 +473,18 @@ function drawElevationChart(x, y, w, h, selected) {
   fill(colors.mediumBrown);
   noStroke();
   text(colMax.toLocaleString() + "m", chartX + chartWidth/2, chartTop); // Massimo in alto
-  text(colMin.toLocaleString() + "m", chartX + chartWidth/2 + 70, chartBottom); // Minimo in basso
+  text(colMin.toLocaleString() + "m", chartX + chartWidth/2 + scaleX(120), chartBottom); // Minimo in basso
   
   // Etichetta dell'elevazione corrente
   fill(colors.accent);
   stroke(colors.accent);
-  strokeWeight(1);
+  strokeWeight(scaleMin(1));
   fill(colors.cream);
-  rect(chartX + chartWidth/2 + 5, currentY - 12, 70, 24, 2); // Sfondo per il testo
+  rect(chartX + scaleX(-50), currentY - scaleY(55), scaleX(100), scaleY(44), scaleMin(2)); // Sfondo per il testo
   fill(colors.accent);
   noStroke();
   textAlign(CENTER, CENTER);
-  text(volcanoElev.toLocaleString() + "m", chartX + chartWidth/2 + 40, currentY);
+  text(volcanoElev.toLocaleString() + "m", chartX, currentY - scaleY(35));
   
   // ========= STATISTICHE IN FONDO =========//
   // Statistiche in fondo
@@ -477,49 +494,49 @@ function drawElevationChart(x, y, w, h, selected) {
   
   // Vulcano più alto
   stroke(colors.mediumBrown);
-  strokeWeight(1);
+  strokeWeight(scaleMin(1));
   drawingContext.setLineDash([3, 3]);
   line(x + w * 0.1, statsY, x + w * 0.9, statsY);
-  line(x + w * 0.1, statsY + 25, x + w * 0.9, statsY + 25);
+  line(x + w * 0.1, statsY + scaleY(45), x + w * 0.9, statsY + scaleY(45));
   drawingContext.setLineDash([]);
   
   fill(colors.lightBrown);
   noStroke();
-  text("Highest volcano", x + w * 0.12, statsY + 12);
+  text("Highest volcano", x + w * 0.12, statsY + scaleY(25));
   fill(colors.accent);
   textAlign(RIGHT);
-  text(colMax.toLocaleString() + " m", x + w * 0.88, statsY + 12);
+  text(colMax.toLocaleString() + " m", x + w * 0.88, statsY + scaleY(25));
   
   // Vulcano più basso
-  statsY += 35;
+  statsY += scaleY(35);
   stroke(colors.mediumBrown);
-  strokeWeight(1);
+  strokeWeight(scaleMin(1));
   drawingContext.setLineDash([3, 3]);
-  line(x + w * 0.1, statsY + 25, x + w * 0.9, statsY + 25);
+  line(x + w * 0.1, statsY + scaleY(55), x + w * 0.9, statsY + scaleY(55));
   drawingContext.setLineDash([]);
   
   fill(colors.lightBrown);
   noStroke();
   textAlign(LEFT);
-  text("Lowest volcano", x + w * 0.12, statsY + 12);
+  text("Lowest volcano", x + w * 0.12, statsY + scaleY(35));
   fill(colors.accent);
   textAlign(RIGHT);
-  text(colMin.toLocaleString() + " m", x + w * 0.88, statsY + 12);
+  text(colMin.toLocaleString() + " m", x + w * 0.88, statsY + scaleY(35));
   
   // Vulcano corrente
-  statsY += 40;
+  statsY += scaleY(40);
   fill(colors.cream);
   stroke(colors.orange);
-  strokeWeight(1);
-  rect(x + w * 0.1, statsY-5, w * 0.8, 30, 2); // Riquadro evidenziato
+  strokeWeight(scaleMin(1));
+  rect(x + w * 0.1, statsY - scaleY(-25), w * 0.8, scaleY(50), scaleMin(2)); // Riquadro evidenziato
   
   fill(colors.mediumBrown);
   noStroke();
   textAlign(LEFT);
-  text("Current volcano", x + w * 0.12, statsY + 10);
+  text("Current volcano", x + w * 0.12, statsY + scaleY(53));
   fill(colors.accent);
   textAlign(RIGHT);
-  text(volcanoElev.toLocaleString() + " m", x + w * 0.88, statsY + 10);
+  text(volcanoElev.toLocaleString() + " m", x + w * 0.88, statsY + scaleY(53));
   
   pop();
 }
@@ -530,35 +547,35 @@ function drawVolcanoCard(x, y, w, h, selected) {
   // Sfondo della card
   fill(255);
   stroke(colors.mediumBrown);
-  strokeWeight(2);
-  rect(x, y, w , h, 2);
+  strokeWeight(scaleMin(2));
+  rect(x, y, w , h, scaleMin(2));
   
   // Angoli decorativi
   drawCardCorners(x, y, w, h);
   
   // Header - Ultima eruzione conosciuta
   fill(colors.cream);
-  rect(x, y, w, h * 0.12, 2, 2, 0, 0); // Solo angoli superiori arrotondati
+  rect(x, y, w, h * 0.12, scaleMin(2), scaleMin(2), 0, 0); // Solo angoli superiori arrotondati
   
   // Linea decorativa dell'header
   stroke(colors.mediumBrown);
-  strokeWeight(2);
+  strokeWeight(scaleMin(2));
   line(x, y + h * 0.12, x + w, y + h * 0.12);
   
   // Ticchetti decorativi piccoli
   // Quelle lineette verticali sotto l'header
-  strokeWeight(1);
+  strokeWeight(scaleMin(1));
   for (let i = 0; i < 20; i++) {
-    line(x + (i * w/20), y + h * 0.12, x + (i * w/20), y + h * 0.12 + 3);
+    line(x + (i * w/20), y + h * 0.12, x + (i * w/20), y + h * 0.12 + scaleMin(3));
   }
   
   // Punti decorativi nell'header
   fill(colors.accent);
   noStroke();
   let headerY = y + h * 0.025;
-  circle(x + w/2 - 6, headerY, 3);
-  circle(x + w/2, headerY, 3);
-  circle(x + w/2 + 6, headerY, 3);
+  circle(x + w/2 - scaleX(6), headerY, scaleMin(3));
+  circle(x + w/2, headerY, scaleMin(3));
+  circle(x + w/2 + scaleX(6), headerY, scaleMin(3));
   
   // Testo dell'header
   textFont('Georgia');
@@ -619,36 +636,36 @@ function drawVolcanoCard(x, y, w, h, selected) {
   // Footer - Categoria del tipo
   let footerY = y + h * 0.88;
   fill(colors.cream);
-  rect(x, footerY, w, h * 0.12, 0, 0, 2, 2); // Solo angoli inferiori arrotondati
+  rect(x, footerY, w, h * 0.12, 0, 0, scaleMin(2), scaleMin(2)); // Solo angoli inferiori arrotondati
   
   // Linea decorativa del footer
   stroke(colors.mediumBrown);
-  strokeWeight(2);
+  strokeWeight(scaleMin(2));
   line(x, footerY, x + w, footerY);
   
   // Ticchetti decorativi piccoli
-  strokeWeight(1);
+  strokeWeight(scaleMin(1));
   for (let i = 0; i < 20; i++) {
-    line(x + (i * w/20), footerY, x + (i * w/20), footerY - 3);
+    line(x + (i * w/20), footerY, x + (i * w/20), footerY - scaleMin(3));
   }
   
   // Testo del footer
   textAlign(CENTER, CENTER);
-  textSize(w * 0.04);
+  textSize(w * 0.03);
   fill(colors.lightBrown);
   noStroke();
   text("Generic Type", x + w/2, footerY + h * 0.04);
   
-  textSize(w * 0.055);
+  textSize(w * 0.040);
   fill(colors.darkBrown);
   text(typeCategory, x + w/2, footerY + h * 0.08);
   
   // Punti decorativi nel footer
   fill(colors.accent);
   let footerDotsY = footerY + h * 0.105;
-  circle(x + w/2 - 6, footerDotsY, 3);
-  circle(x + w/2, footerDotsY, 3);
-  circle(x + w/2 + 6, footerDotsY, 3);
+  circle(x + w/2 - scaleX(6), footerDotsY, scaleMin(3));
+  circle(x + w/2, footerDotsY, scaleMin(3));
+  circle(x + w/2 + scaleX(6), footerDotsY, scaleMin(3));
   
   pop();
 }
@@ -661,8 +678,8 @@ function drawInfoPanels(x, y, w, h, selected, statusDescriptions) {
   
   // Pannello stato
   // Il pannello in basso a destra con lo stato del vulcano
-  let panel2Y = y + panel1H + 20;
-  let panel2H = h - panel1H - 20;
+  let panel2Y = y + panel1H + scaleY(20);
+  let panel2H = h - panel1H - scaleY(20);
   drawStatusPanel(x, panel2Y, w, panel2H, selected, statusDescriptions);
 }
 
@@ -672,8 +689,8 @@ function drawTypeDescriptionPanel(x, y, w, h, selected) {
   // Sfondo della card
   fill(255);
   stroke(colors.mediumBrown);
-  strokeWeight(2);
-  rect(x, y, w, h, 2);
+  strokeWeight(scaleMin(2));
+  rect(x, y, w, h, scaleMin(2));
   
   // Angoli decorativi
   drawCardCorners(x, y, w, h);
@@ -685,24 +702,24 @@ function drawTypeDescriptionPanel(x, y, w, h, selected) {
   // Titolo
   textFont('Georgia');
   textAlign(CENTER, CENTER);
-  textSize(w * 0.025);
+  textSize(w * 0.023);
   fill(colors.lightBrown);
   noStroke();
   text("SPECIFIC TYPE", x + w/2, y + h * 0.15);
   
   // Valore del tipo
   // Il tipo specifico del vulcano (più dettagliato della categoria generica)
-  textSize(w * 0.055);
+  textSize(w * 0.045);
   fill(colors.accent);
-  text(selected.getString("Type"), x + w/2, y + h * 0.23);
+  text(selected.getString("Type"), x + w/2, y + h * 0.24);
   
   // Punti separatori decorativi
   // I tre punti di diverse dimensioni tra tipo e descrizione
   fill(colors.accent);
   let dotY = y + h * 0.3;
-  circle(x + w/2 - 8, dotY, 4);
-  circle(x + w/2, dotY, 3);
-  circle(x + w/2 + 8, dotY, 2);
+  circle(x + w/2 - scaleX(8), dotY, scaleMin(4));
+  circle(x + w/2, dotY, scaleMin(3));
+  circle(x + w/2 + scaleX(8), dotY, scaleMin(2));
   
   // Box della descrizione
   let descX = x + w * 0.08;
@@ -712,9 +729,9 @@ function drawTypeDescriptionPanel(x, y, w, h, selected) {
   
   fill(colors.cream);
   stroke(colors.orange);
-  strokeWeight(1);
+  strokeWeight(scaleMin(1));
   drawingContext.setLineDash([5, 3]); // Bordo tratteggiato
-  rect(descX, descY, descW, descH, 2);
+  rect(descX, descY, descW, descH, scaleMin(2));
   drawingContext.setLineDash([]);
   
   // Testo della descrizione
@@ -725,12 +742,12 @@ function drawTypeDescriptionPanel(x, y, w, h, selected) {
   
   let description = selected.getString("Description");
   // Uso wrapText per spezzare il testo in più righe
-  let lines = wrapText(description, descW - 20, textSize());
+  let lines = wrapText(description, descW - scaleX(20), textSize());
   let lineHeight = textSize() * 1.4;
-  let currentY = descY + 10;
+  let currentY = descY + scaleY(10);
   
   for (let line of lines) {
-    text(line, descX + 10, currentY);
+    text(line, descX + scaleX(10), currentY);
     currentY += lineHeight;
   }
   
@@ -743,8 +760,8 @@ function drawStatusPanel(x, y, w, h, selected, statusDescriptions) {
   // Sfondo della card
   fill(255);
   stroke(colors.mediumBrown);
-  strokeWeight(2);
-  rect(x, y, w, h, 2);
+  strokeWeight(scaleMin(2));
+  rect(x, y, w, h, scaleMin(2));
   
   // Angoli decorativi
   drawCardCorners(x, y, w, h);
@@ -756,25 +773,25 @@ function drawStatusPanel(x, y, w, h, selected, statusDescriptions) {
   // Titolo
   textFont('Georgia');
   textAlign(CENTER, CENTER);
-  textSize(w * 0.025);
+  textSize(w * 0.023);
   fill(colors.lightBrown);
   noStroke();
   text("STATUS", x + w/2, y + h * 0.15);
   
   // Valore dello stato
-  textSize(w * 0.055);
+  textSize(w * 0.045);
   fill(colors.orange);
-  text(selected.getString("Status"), x + w/2, y + h * 0.23);
+  text(selected.getString("Status"), x + w/2, y + h * 0.24);
   
   // Linea divisoria
   stroke(colors.mediumBrown);
-  strokeWeight(1);
+  strokeWeight(scaleMin(1));
   drawingContext.setLineDash([3, 3]);
   line(x + w * 0.1, y + h * 0.3, x + w * 0.9, y + h * 0.3);
   drawingContext.setLineDash([]);
   
   // Testo di spiegazione (piccolo e in corsivo)
-  textSize(w * 0.032);
+  textSize(w * 0.025);
   fill(colors.lightBrown);
   noStroke();
   textAlign(CENTER, TOP);
@@ -792,21 +809,21 @@ function drawStatusPanel(x, y, w, h, selected, statusDescriptions) {
   
   fill(colors.cream);
   stroke(colors.accent);
-  strokeWeight(2);
-  rect(descX, descY, descW, descH, 2);
+  strokeWeight(scaleMin(2));
+  rect(descX, descY, descW, descH, scaleMin(2));
   
   // Angoli interni
   // Quelle lineette decorative dentro gli angoli del box
   stroke(colors.mediumBrown);
-  strokeWeight(1);
-  line(descX, descY, descX + 6, descY);
-  line(descX, descY, descX, descY + 6);
-  line(descX + descW, descY, descX + descW - 6, descY);
-  line(descX + descW, descY, descX + descW, descY + 6);
-  line(descX, descY + descH, descX + 6, descY + descH);
-  line(descX, descY + descH, descX, descY + descH - 6);
-  line(descX + descW, descY + descH, descX + descW - 6, descY + descH);
-  line(descX + descW, descY + descH, descX + descW, descY + descH - 6);
+  strokeWeight(scaleMin(1));
+  line(descX, descY, descX + scaleX(6), descY);
+  line(descX, descY, descX, descY + scaleY(6));
+  line(descX + descW, descY, descX + descW - scaleX(6), descY);
+  line(descX + descW, descY, descX + descW, descY + scaleY(6));
+  line(descX, descY + descH, descX + scaleX(6), descY + descH);
+  line(descX, descY + descH, descX, descY + descH - scaleY(6));
+  line(descX + descW, descY + descH, descX + descW - scaleX(6), descY + descH);
+  line(descX + descW, descY + descH, descX + descW, descY + descH - scaleY(6));
   
   // Testo della descrizione dello stato
   fill(colors.darkBrown);
@@ -816,12 +833,12 @@ function drawStatusPanel(x, y, w, h, selected, statusDescriptions) {
   
   let status = selected.getString("Status");
   let statusDesc = statusDescriptions[status] || "Description not available.";
-  let lines = wrapText(statusDesc, descW - 20, textSize());
+  let lines = wrapText(statusDesc, descW - scaleX(20), textSize());
   let lineHeight = textSize() * 1.4;
-  let currentY = descY + 10;
+  let currentY = descY + scaleY(10);
   
   for (let line of lines) {
-    text(line, descX + 10, currentY);
+    text(line, descX + scaleX(10), currentY);
     currentY += lineHeight;
   }
   
@@ -831,46 +848,38 @@ function drawStatusPanel(x, y, w, h, selected, statusDescriptions) {
 function drawCardCorners(x, y, w, h) {
   push();
   stroke(colors.orange);
-  strokeWeight(2);
+  strokeWeight(scaleMin(2));
   noFill();
   
   // Angolo superiore sinistro
-  line(x, y, x + 12, y);
-  line(x, y, x, y + 12);
+  line(x, y, x + scaleX(12), y);
+  line(x, y, x, y + scaleY(12));
   
   // Angolo superiore destro
-  line(x + w, y, x + w - 12, y);
-  line(x + w, y, x + w, y + 12);
+  line(x + w, y, x + w - scaleX(12), y);
+  line(x + w, y, x + w, y + scaleY(12));
   
   // Angolo inferiore sinistro
-  line(x, y + h, x + 12, y + h);
-  line(x, y + h, x, y + h - 12);
+  line(x, y + h, x + scaleX(12), y + h);
+  line(x, y + h, x, y + h - scaleY(12));
   
   // Angolo inferiore destro
-  line(x + w, y + h, x + w - 12, y + h);
-  line(x + w, y + h, x + w, y + h - 12);
+  line(x + w, y + h, x + w - scaleX(12), y + h);
+  line(x + w, y + h, x + w, y + h - scaleY(12));
   
   pop();
 }
 
 function drawFooter(x, y) {
   push();
-  
-  // Box decorativo
-  stroke(colors.accent);
-  strokeWeight(2);
-  noFill();
-  drawingContext.setLineDash([3, 3]); // Linea tratteggiata
-  rect(x - 280, y - 15, 560, 30, 0);
-  drawingContext.setLineDash([]);
-  
+
   // Testo
   textFont('Georgia');
-  textSize(width * 0.01);
+  textSize(scaleX(12)); // width * 0.01 per 1920px = 19px
   fill(colors.lightBrown);
   textAlign(CENTER, CENTER);
   noStroke();
-  text("Data from the Smithsonian Institution's Global Volcanism Program", x, y);
+  text("Data from the Smithsonian Institution's Global Volcanism Program", x, y - scaleY(25));
   
   pop();
 }
