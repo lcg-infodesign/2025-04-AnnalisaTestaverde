@@ -61,7 +61,7 @@ let mappaImg;
 
 function preload(){
   data = loadTable("detail.csv", "csv", "header");
-  mappaImg = loadImage("../Image/mappa.png");
+  mappaImg = loadImage("Image/mappa.png");
 }
 
 function setup(){
