@@ -82,15 +82,15 @@ function preload() {
   // Precarico tutte le immagini dei tipi di vulcano
   // Ogni immagine viene associata a una chiave nell'oggetto volcanoImages
   // Questo mi serve per avere tutte le immagini pronte quando le devo usare
-  volcanoImages['Caldera'] = loadImage("../Image/Caldera.png");
-  volcanoImages['Cone'] = loadImage("../Image/Cone.png");
-  volcanoImages['CraterSystem'] = loadImage("../Image/CraterSystem.png");
-  volcanoImages['Shield'] = loadImage("../Image/Shield.png");
-  volcanoImages['Stratovolcano'] = loadImage("../Image/stratovolcano.png");
-  volcanoImages['Subglacial'] = loadImage("../Image/Subglacial.png");
-  volcanoImages['Submarine'] = loadImage("../Image/Submarine.png");
-  volcanoImages['Tuffring'] = loadImage("../Image/Tuffring.png");
-  volcanoImages['Unknown'] = loadImage("../Image/Unknown.png");
+  volcanoImages['Caldera'] = loadImage("Image/Caldera.png");
+  volcanoImages['Cone'] = loadImage("Image/Cone.png");
+  volcanoImages['CraterSystem'] = loadImage("Image/CraterSystem.png");
+  volcanoImages['Shield'] = loadImage("Image/Shield.png");
+  volcanoImages['Stratovolcano'] = loadImage("Image/stratovolcano.png");
+  volcanoImages['Subglacial'] = loadImage("Image/Subglacial.png");
+  volcanoImages['Submarine'] = loadImage("Image/Submarine.png");
+  volcanoImages['Tuffring'] = loadImage("Image/Tuffring.png");
+  volcanoImages['Unknown'] = loadImage("Image/Unknown.png");
 }
 
 function setup() {
